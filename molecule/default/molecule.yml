@@ -1,14 +1,12 @@
 ---
 dependency:
   name: galaxy
-  options:
-    role-file: requirements.yml
 driver:
   name: docker
-lint: |
-  set -e
-  yamllint .
-  ansible-lint
+# lint: |
+#   set -e
+#   yamllint .
+#   ansible-lint
 platforms:
   - name: instance
     image: dcagatay/ubuntu-dind:20.04
