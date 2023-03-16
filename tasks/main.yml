@@ -1,4 +1,8 @@
 ---
+- name: Install Docker
+  ansible.builtin.import_tasks:
+    file: docker.yml
+
 - name: Create a network for bitwarden
   community.docker.docker_network:
     name: "{{ bw_network_name }}"
