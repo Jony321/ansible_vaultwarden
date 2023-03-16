@@ -1,0 +1,31 @@
+---
+# defaults file for vaultwarden
+
+yubico_client_id: not_used
+yubico_secret_key: not_used
+#disable this for the first time
+
+# Bitwarden base variables
+signups_allowed: false
+smtp_host: smtp.gmail.com
+smtp_from: robot@example.com
+smtp_port: 465
+smtp_security: force_tls
+smtp_username: robot@example.com
+smtp_password: some_password
+domain: "https://bw.example.com"
+
+# Postgres container variables
+pg4bw_image: postgres:11
+pg4bw_container_name: bitwarden-db
+pg4bw_data: /var/bitwarden-db
+pg4bw_init_user_db_dir: /var/bitwarden-db-init
+pg4bw_postgres_password: some_password
+pg4bw_vaultwarden_user: vaultwarden
+pg4bw_vaultwarden_password: some_password
+
+# Bitwarden container variables
+bw_image: vaultwarden/server:1.25.0
+bw_data: /var/bitwarden
+bw_container_name: bitwarden
+bw_network_name: bw_network

@@ -1,0 +1,7 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: "Include test.ansible_vaultwarden"
+      include_role:
+        name: "ansible_vaultwarden"

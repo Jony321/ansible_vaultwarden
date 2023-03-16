@@ -1,0 +1,81 @@
+---
+- name: Create a network for bitwarden
+  community.docker.docker_network:
+    name: "{{ bw_network_name }}"
+    driver: bridge
+
+- name: Create DB folders
+  file:
+    dest: "{{ item }}"
+    state: directory
+  loop:
+    - "{{ pg4bw_data }}"
+    - "{{ pg4bw_init_user_db_dir }}"
+
+# This task will copy script to create DB vaultwarden during container initialization.
+# More info - https://github.com/docker-library/docs/blob/master/postgres/README.md#initialization-scripts
+- name: Copy init_user_db script to {{ pg4bw_init_user_db_dir }}
+  template:
+    src: create_vaultwarden_db.sh.j2
+    dest: "{{ pg4bw_init_user_db_dir }}/create_vaultwarden_db.sh"
+
+- name: Create vaultwarden data folder
+  file:
+    dest: "{{ bw_data }}"
+    state: directory
+    mode: 0750
+    owner: root
+    group: root
+
+- name: Start vaultwarden and postgres docker containers
+  community.docker.docker_compose:
+    state: present
+    project_name: bitwarden
+    definition:
+      version: '3'
+      services:
+        bitwarden-db:
+          image: "{{ pg4bw_image }}"
+          restart: always
+          volumes:
+            - "{{ pg4bw_data }}:/var/lib/postgresql/data"
+            - "{{ pg4bw_init_user_db_dir }}:/docker-entrypoint-initdb.d"
+          environment:
+            PGUSER: postgres
+            POSTGRES_PASSWORD: "{{ pg4bw_postgres_password }}"
+          container_name: "{{ pg4bw_container_name }}"
+          healthcheck:
+            test: ["CMD-SHELL", "pg_isready -d vaultwarden"]
+            # start_period: 300s
+            interval: 10s
+            timeout: 15s
+            retries: 3
+        bitwarden:
+          image: "{{ bw_image }}"
+          restart: always
+          volumes:
+            - "{{ bw_data }}:/data"
+          ports:
+            # host:port
+            - "127.0.0.1:8080:80"
+          environment:
+            - YUBICO_CLIENT_ID={{ yubico_client_id }}
+            - YUBICO_SECRET_KEY={{ yubico_secret_key }}
+            # disable this for the first time
+            - SIGNUPS_ALLOWED={{ signups_allowed }}
+            - SMTP_HOST={{ smtp_host }}
+            - SMTP_FROM={{ smtp_from }}
+            - SMTP_PORT={{ smtp_port }}
+            - SMTP_SECURITY={{ smtp_security }}
+            - SMTP_USERNAME={{ smtp_username }}
+            - SMTP_PASSWORD={{ smtp_password }}
+            - DOMAIN={{ domain }}
+            - DATABASE_URL=postgresql://{{ pg4bw_vaultwarden_user }}:{{ pg4bw_vaultwarden_password }}@{{ pg4bw_container_name }}:5432/vaultwarden
+          container_name: "{{ bw_container_name }}"
+          depends_on:
+            bitwarden-db:
+              condition: service_healthy
+      networks:
+        default:
+          external:
+            name: "{{ bw_network_name }}"

@@ -1,0 +1,8 @@
+#!/bin/bash
+set -e
+
+psql -v ON_ERROR_STOP=1 --username postgres --dbname postgres <<-EOSQL
+    CREATE DATABASE vaultwarden;
+    CREATE USER {{ pg4bw_vaultwarden_user }} WITH ENCRYPTED PASSWORD '{{ pg4bw_vaultwarden_password }}';
+    GRANT all privileges ON database vaultwarden TO {{ pg4bw_vaultwarden_user }};
+EOSQL
