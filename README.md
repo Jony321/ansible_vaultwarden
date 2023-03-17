@@ -6,7 +6,7 @@ ansible_vaultwarden
 Requirements
 ------------
 - Для тестирования роли с помощью molecule требуется установка соответствующих пакетов:
-`pip install requirements.txt`
+`pip install -r requirements.txt`
 
 Role Variables
 --------------
@@ -73,20 +73,13 @@ Dependencies
     - geerlingguy.pip
     - geerlingguy.docker
 ```
-- Необходимо убедиться, что на целевом хосте установлены необходимые пакеты для управления контейнерами, следать это можно с помощью роли `sorrowless.docker`.
-```
-  hosts: servers
-  become: true
-  roles:
-    - { role: sorrowless.docker }
-```
 
 Example Playbook
 ----------------
 Установка molecule и тестирование роли `jony321.ansible_vaultwarden`:
 ```
 $ ansible-galaxy install jony321.ansible_vaultwarden
-$ pip install molecule[docker] yamllint ansible-lint
+$ pip install -r requirements.txt
 $ cd [/path/to/roles/folder]/jony321.ansible_vaultwarden
 $ molecule test
 ```
