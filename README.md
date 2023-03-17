@@ -41,6 +41,7 @@ pg4bw_vaultwarden_password: some_password
 
 **Переменные для запуска контейнера с ПО Vaultwarden/Bitwarden**
 ```
+bw_image: vaultwarden/server:1.25.0
 bw_data: /var/bitwarden
 bw_container_name: bitwarden
 bw_network_name: bw_network
