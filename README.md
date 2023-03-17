@@ -5,8 +5,13 @@ ansible_vaultwarden
 
 Requirements
 ------------
-- Для тестирования роли с помощью molecule требуется установка соответствующих пакетов:
-`pip install -r requirements.txt`
+- ansible
+- python3-pip
+- Для тестирования роли с помощью molecule требуется установка соответствующих пакетов:  
+  - `pip install -r requirements.txt`
+  - docker, docker-compose (см. Dependencies|Установка docker и необходимых python библиотек)
+    - `ansible-galaxy install geerlingguy.pip geerlingguy.docker`
+  - Добавить пользвоателя в группу docker
 
 Role Variables
 --------------
@@ -61,9 +66,9 @@ smtp_password: some_password
 
 Dependencies
 ------------
-- Установка необходимых python библиотек:
+- Установка docker и необходимых python библиотек:
 ```
-- hosts: servers
+- hosts: servers (or localhost if not installed)
   become: true
   vars:
     pip_install_packages:
@@ -78,7 +83,7 @@ Example Playbook
 ----------------
 Установка molecule и тестирование роли `jony321.ansible_vaultwarden`:
 ```
-$ ansible-galaxy install jony321.ansible_vaultwarden
+$ ansible-galaxy install jony321.ansible_vaultwarden -p [/path/to/roles/folder]
 $ pip install -r requirements.txt
 $ cd [/path/to/roles/folder]/jony321.ansible_vaultwarden
 $ molecule test
