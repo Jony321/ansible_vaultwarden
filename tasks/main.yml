@@ -1,21 +1,4 @@
 ---
-- name: Install Docker
-  ansible.builtin.import_tasks:
-    file: docker.yml
-
-- name: Make sure required packages are installed
-  package:
-    name: "{{ item }}"
-    state: present
-  with_items:
-    - python3-pip
-- name: Make sure that required modules are installled
-  pip:
-    name: "{{ item }}"
-  with_items:
-    - requests
-    - docker
-    - docker-compose
 
 - name: Create a network for bitwarden
   community.docker.docker_network:
