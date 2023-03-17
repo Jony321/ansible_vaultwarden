@@ -5,7 +5,7 @@ ansible_vaultwarden
 
 Requirements
 ------------
-
+- 
 
 Role Variables
 --------------
@@ -47,17 +47,55 @@ bw_container_name: bitwarden
 bw_network_name: bw_network
 ```
 
+❗ **Переменные, которые стоит хранить в зашифрованном виде:**
+```
+pg4bw_postgres_password: some_password
+pg4bw_vaultwarden_user: vaultwarden
+pg4bw_vaultwarden_password: some_password
+
+smtp_from: robot@example.com
+smtp_username: robot@example.com
+smtp_password: some_password
+```
+
 Dependencies
 ------------
-
-
-Example Playbook
-----------------
+- Установка необходимых python библиотек:
+```
+- hosts: servers
+  become: true
+  vars:
+    pip_install_packages:
+      - name: docker
+  roles:
+    - geerlingguy.pip
+    - geerlingguy.docker
+```
+- Необходимо убедиться, что на целевом хосте установлены необходимые пакеты для управления контейнерами, следать это можно с помощью роли `sorrowless.docker`.
 ```
   hosts: servers
   become: true
   roles:
-    - { role: ansible_vaultwarden }
+    - { role: sorrowless.docker }
+```
+- Для тестирования роли с помощью molecule требуется установка соответствующих пакетов:
+`pip install molecule[docker] yamllint ansible-lint`
+
+Example Playbook
+----------------
+Установка molecule и тестирование роли `jony321.ansible_vaultwarden`:
+```
+$ ansible-galaxy install jony321.ansible_vaultwarden
+$ pip install molecule[docker] yamllint ansible-lint
+$ cd [/path/to/roles/folder]/jony321.ansible_vaultwarden
+$ molecule test
+```
+Развертывание Vaultwarde/Bitwarden с БД postgresql:
+```
+  hosts: servers
+  become: true
+  roles:
+    - { role: jony321.ansible_vaultwarden }
 ```
 License
 -------
