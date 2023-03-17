@@ -6,9 +6,10 @@
     driver: bridge
 
 - name: Create DB folders
-  file:
+  ansible.builtin.file:
     dest: "{{ item }}"
     state: directory
+    mode: 0750
   loop:
     - "{{ pg4bw_data }}"
     - "{{ pg4bw_init_user_db_dir }}"
@@ -16,12 +17,12 @@
 # This task will copy script to create DB vaultwarden during container initialization.
 # More info - https://github.com/docker-library/docs/blob/master/postgres/README.md#initialization-scripts
 - name: Copy init_user_db script to {{ pg4bw_init_user_db_dir }}
-  template:
+  ansible.builtin.template:
     src: create_vaultwarden_db.sh.j2
     dest: "{{ pg4bw_init_user_db_dir }}/create_vaultwarden_db.sh"
 
 - name: Create vaultwarden data folder
-  file:
+  ansible.builtin.file:
     dest: "{{ bw_data }}"
     state: directory
     mode: 0750
