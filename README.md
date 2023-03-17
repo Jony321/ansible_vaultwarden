@@ -5,7 +5,8 @@ ansible_vaultwarden
 
 Requirements
 ------------
-- 
+- Для тестирования роли с помощью molecule требуется установка соответствующих пакетов:
+`pip install molecule[docker] yamllint ansible-lint`
 
 Role Variables
 --------------
@@ -67,6 +68,7 @@ Dependencies
   vars:
     pip_install_packages:
       - name: docker
+      - name: docker-compose
   roles:
     - geerlingguy.pip
     - geerlingguy.docker
@@ -78,8 +80,6 @@ Dependencies
   roles:
     - { role: sorrowless.docker }
 ```
-- Для тестирования роли с помощью molecule требуется установка соответствующих пакетов:
-`pip install molecule[docker] yamllint ansible-lint`
 
 Example Playbook
 ----------------
