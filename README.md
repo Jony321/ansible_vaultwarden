@@ -6,7 +6,7 @@ ansible_vaultwarden
 Requirements
 ------------
 - Для тестирования роли с помощью molecule требуется установка соответствующих пакетов:
-`pip install molecule[docker] yamllint ansible-lint`
+`pip install requirements.txt`
 
 Role Variables
 --------------
