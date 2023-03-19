@@ -7,9 +7,9 @@
 
 - name: Create DB folders
   ansible.builtin.file:
-    dest: "{{ item }}"
+    dest: "{{ item.dest }}"
     state: directory
-    mode: 0750
+    mode: "{{ item.mode }}"
   loop:
     - { dest: "{{ pg4bw_data }}", mode: '0750' }
     - { dest: "{{ pg4bw_init_user_db_dir }}", mode: '0755' }
