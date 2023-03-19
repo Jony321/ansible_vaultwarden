@@ -68,6 +68,9 @@ Dependencies
 ------------
 - Установка docker и необходимых python библиотек:
 ```
+---
+# pip.yml
+#
 - hosts: servers (or localhost if not installed)
   become: true
   vars:
@@ -78,6 +81,8 @@ Dependencies
     - geerlingguy.pip
     - geerlingguy.docker
 ```
+
+`$ ansible-playbook pip.yml`
 
 Example Playbook
 ----------------
