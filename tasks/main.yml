@@ -11,7 +11,7 @@
     state: directory
     mode: "{{ item.mode }}"
   loop:
-    - { dest: "{{ pg4bw_data }}", mode: '0750' }
+    - { dest: "{{ pg4bw_data }}", mode: '0700' }
     - { dest: "{{ pg4bw_init_user_db_dir }}", mode: '0755' }
 
 # This task will copy script to create DB vaultwarden during container initialization.
