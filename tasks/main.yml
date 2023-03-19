@@ -20,7 +20,7 @@
   ansible.builtin.template:
     src: create_vaultwarden_db.sh.j2
     dest: "{{ pg4bw_init_user_db_dir }}/create_vaultwarden_db.sh"
-    mode: 0750
+    mode: 0755
 
 - name: Create vaultwarden data folder
   ansible.builtin.file:
