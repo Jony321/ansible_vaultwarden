@@ -55,7 +55,6 @@
             AWS_SECRET_ACCESS_KEY: "{{ pg4bw_aws_secret }}"
             WALG_S3_PREFIX: "{{ pg4bw_s3_bucket }}"
             PGDATABASE: vaultwarden
-            PGUSER: "{{ pg4bw_vaultwarden_user }}"
             PGPASSWORD: "{{ pg4bw_vaultwarden_password }}"
             PGHOST: /var/run/postgresql
             PGDATA: /var/lib/postgresql/data
