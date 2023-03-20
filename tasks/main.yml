@@ -44,8 +44,30 @@
             - "{{ pg4bw_data }}:/var/lib/postgresql/data"
             - "{{ pg4bw_init_user_db_dir }}:/docker-entrypoint-initdb.d"
           environment:
-            PGUSER: postgres
-            POSTGRES_PASSWORD: "{{ pg4bw_postgres_password }}"
+            PGUSER: "{{ pg4bw_vaultwarden_user }}"
+            POSTGRES_PASSWORD: "{{ pg4bw_vaultwarden_password }}"
+            POSTGRES_DB: vaultwarden
+            POSTGRES_USER: "{{ pg4bw_vaultwarden_user }}"
+            POSTGRES_PASSWORD: "{{ pg4bw_vaultwarden_password }}"
+            ARCHIVE_MODE: on
+            ARCHIVE_TIMEOUT: 3600
+            AWS_ACCESS_KEY_ID: "{{ pg4bw_aws_key }}"
+            AWS_REGION: "{{ pg4bw_aws_region }}"
+            AWS_SECRET_ACCESS_KEY: "{{ pg4bw_aws_secret }}"
+            WALG_S3_PREFIX: "{{ pg4bw_s3_bucket }}"
+            PGDATABASE: vaultwarden
+            PGUSER: "{{ pg4bw_vaultwarden_user }}"
+            PGPASSWORD: "{{ pg4bw_vaultwarden_password }}"
+            PGHOST: /var/run/postgresql
+            PGDATA: /var/lib/postgresql/data
+            WALG_COMPRESSION_METHOD: brotli
+            WALG_DELTA_MAX_STEPS: 6
+            APPRISE_TARGET: ${APPRISE_TARGET}
+            # RECOVERY_TARGET_ACTION: ${RECOVERY_TARGET_ACTION}
+            # RECOVERY_TARGET_TIME: ${RECOVERY_TARGET_TIME}
+            # RECOVERY_TARGET_TIMELINE: ${RECOVERY_TARGET_TIMELINE}
+            # RECOVERY_WALG: ${RECOVERY_WALG}
+            # WALG_RESTORE_NAME: ${WALG_RESTORE_NAME}
           container_name: "{{ pg4bw_container_name }}"
           healthcheck:
             test: ["CMD-SHELL", "pg_isready -d vaultwarden"]

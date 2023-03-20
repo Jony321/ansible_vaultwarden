@@ -62,6 +62,15 @@ pg4bw_vaultwarden_password: some_password
 smtp_from: robot@example.com
 smtp_username: robot@example.com
 smtp_password: some_password
+
+# AWS s3 bucket variables (optional)
+pg4bw_aws_key: 'some_aws_access_key'
+pg4bw_aws_secret: 'some_aws_secret_key'
+pg4bw_aws_region: 'some_aws_region'
+pg4bw_s3_bucket: 's3://aws_s3_bucket_name'
+
+# Telegram notification variables
+pg4bw_aprise_target: 'some_aprise_target'
 ```
 
 Dependencies
