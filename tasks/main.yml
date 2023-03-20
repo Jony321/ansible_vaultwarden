@@ -48,7 +48,6 @@
             POSTGRES_PASSWORD: "{{ pg4bw_vaultwarden_password }}"
             POSTGRES_DB: vaultwarden
             POSTGRES_USER: "{{ pg4bw_vaultwarden_user }}"
-            POSTGRES_PASSWORD: "{{ pg4bw_vaultwarden_password }}"
             ARCHIVE_MODE: on
             ARCHIVE_TIMEOUT: 3600
             AWS_ACCESS_KEY_ID: "{{ pg4bw_aws_key }}"
