@@ -91,11 +91,14 @@ Example Playbook
 $ ansible-galaxy install jony321.ansible_vaultwarden -p [/path/to/roles/folder]
 $ pip install -r requirements.txt
 $ cd [/path/to/roles/folder]/jony321.ansible_vaultwarden
-$ molecule test
+$ ~/.local/bin/molecule test
 ```
 Развертывание Vaultwarde/Bitwarden с БД postgresql:
 ```
-  hosts: servers
+---
+# main.yml
+#
+- hosts: servers
   become: true
   roles:
     - { role: jony321.ansible_vaultwarden }
