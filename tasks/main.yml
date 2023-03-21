@@ -60,7 +60,7 @@
             PGDATA: /var/lib/postgresql/data
             WALG_COMPRESSION_METHOD: brotli
             WALG_DELTA_MAX_STEPS: 6
-            APPRISE_TARGET: ${APPRISE_TARGET}
+            APPRISE_TARGET: "{{ pg4bw_aprise_target }}"
             # RECOVERY_TARGET_ACTION: ${RECOVERY_TARGET_ACTION}
             # RECOVERY_TARGET_TIME: ${RECOVERY_TARGET_TIME}
             # RECOVERY_TARGET_TIMELINE: ${RECOVERY_TARGET_TIMELINE}
