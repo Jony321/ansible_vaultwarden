@@ -52,6 +52,7 @@
             ARCHIVE_TIMEOUT: 3600
             AWS_ACCESS_KEY_ID: "{{ pg4bw_aws_key }}"
             AWS_REGION: "{{ pg4bw_aws_region }}"
+            AWS_ENDPOINT: "{{ pg4bw_aws_endpoint }}"
             AWS_SECRET_ACCESS_KEY: "{{ pg4bw_aws_secret }}"
             WALG_S3_PREFIX: "{{ pg4bw_s3_bucket }}"
             PGDATABASE: vaultwarden
@@ -96,8 +97,7 @@
             - DATABASE_URL=postgresql://{{ pg4bw_vaultwarden_user }}:{{ pg4bw_vaultwarden_password }}@{{ pg4bw_container_name }}:5432/vaultwarden
           container_name: "{{ bw_container_name }}"
           depends_on:
-            bitwarden-db:
-              condition: service_healthy
+            - bitwarden-db
       networks:
         default:
           external:

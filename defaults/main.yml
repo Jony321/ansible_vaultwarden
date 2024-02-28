@@ -34,6 +34,7 @@ bw_network_name: bw_network
 pg4bw_aws_key: 'some_aws_access_key'
 pg4bw_aws_secret: 'some_aws_secret_key'
 pg4bw_aws_region: 'some_aws_region'
+pg4bw_aws_endpoint: "s3.{{ pg4bw_aws_region }}.amazonaws.com"
 pg4bw_s3_bucket: 's3://aws_s3_bucket_name'
 
 # Telegram notification variables
