@@ -31,11 +31,10 @@
     group: root
 
 - name: Start vaultwarden and postgres docker containers
-  community.docker.docker_compose:
+  community.docker.docker_compose_v2:
     state: present
     project_name: bitwarden
     definition:
-      version: '3'
       services:
         bitwarden-db:
           image: "{{ pg4bw_image }}"
@@ -100,5 +99,5 @@
             - bitwarden-db
       networks:
         default:
-          external:
-            name: "{{ bw_network_name }}"
+          external: true
+          name: "{{ bw_network_name }}"
