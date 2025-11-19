@@ -29,12 +29,21 @@ bw_image: vaultwarden/server:1.25.0
 bw_data: /var/bitwarden
 bw_container_name: bitwarden
 bw_network_name: bw_network
+# In case bw_swarm_deploy is defined, bitwarden will be deployed in swarm mode
+# bw_swarm_deploy:
+#   labels:
+#     - "traefik.enable=true"
+#     - "traefik.docker.network={{ traefik_docker_network_name }}"
+#     - "traefik.http.routers.bitwarden.rule=Host(`{{ bw_web_host }}`)"
+#     - "traefik.http.routers.bitwarden.tls=true"
+#     - "traefik.http.routers.bitwarden.tls.certResolver=acmeDNS"
+#     - "traefik.http.services.bitwarden.loadbalancer.server.port=80"
 
 # AWS s3 bucket variables (optional)
+pg4bw_aws_endpoint: 'some_aws_endpoint'
 pg4bw_aws_key: 'some_aws_access_key'
 pg4bw_aws_secret: 'some_aws_secret_key'
 pg4bw_aws_region: 'some_aws_region'
-pg4bw_aws_endpoint: "s3.{{ pg4bw_aws_region }}.amazonaws.com"
 pg4bw_s3_bucket: 's3://aws_s3_bucket_name'
 
 # Telegram notification variables
