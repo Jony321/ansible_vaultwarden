@@ -1,9 +1,9 @@
 ---
 
-- name: Create a network for bitwarden
-  community.docker.docker_network:
-    name: "{{ bw_network_name }}"
-    driver: bridge
+#- name: Create a network for bitwarden
+#  community.docker.docker_network:
+#    name: "{{ bw_network_name }}"
+#    driver: bridge
 
 - name: Create DB folders
   ansible.builtin.file:
@@ -35,6 +35,7 @@
     state: present
     project_name: bitwarden
     definition:
+      version: '3'
       services:
         bitwarden-db:
           image: "{{ pg4bw_image }}"
@@ -49,9 +50,9 @@
             POSTGRES_USER: "{{ pg4bw_vaultwarden_user }}"
             ARCHIVE_MODE: "on"
             ARCHIVE_TIMEOUT: 3600
+            AWS_ENDPOINT: "{{ pg4bw_aws_endpoint }}"
             AWS_ACCESS_KEY_ID: "{{ pg4bw_aws_key }}"
             AWS_REGION: "{{ pg4bw_aws_region }}"
-            AWS_ENDPOINT: "{{ pg4bw_aws_endpoint }}"
             AWS_SECRET_ACCESS_KEY: "{{ pg4bw_aws_secret }}"
             WALG_S3_PREFIX: "{{ pg4bw_s3_bucket }}"
             PGDATABASE: vaultwarden
@@ -96,8 +97,80 @@
             - DATABASE_URL=postgresql://{{ pg4bw_vaultwarden_user }}:{{ pg4bw_vaultwarden_password }}@{{ pg4bw_container_name }}:5432/vaultwarden
           container_name: "{{ bw_container_name }}"
           depends_on:
-            - bitwarden-db
+            bitwarden-db:
+              condition: service_healthy
       networks:
         default:
-          external: true
-          name: "{{ bw_network_name }}"
+          external:
+            name: "{{ bw_network_name }}"
+  when:
+    - bw_swarm_deploy is not defined
+
+- name: Deploy bitwarden container in swarm
+  community.docker.docker_stack:
+    state: present
+    name: "{{ bw_container_name | default('bitwarden') }}"
+    with_registry_auth: true
+    compose:
+      - services:
+          bitwarden-db:
+            image: "{{ pg4bw_image }}"
+            volumes:
+              - "{{ pg4bw_data }}:/var/lib/postgresql/data"
+              - "{{ pg4bw_init_user_db_dir }}:/docker-entrypoint-initdb.d"
+            environment:
+              PGUSER: "{{ pg4bw_vaultwarden_user }}"
+              POSTGRES_PASSWORD: "{{ pg4bw_vaultwarden_password }}"
+              POSTGRES_DB: vaultwarden
+              POSTGRES_USER: "{{ pg4bw_vaultwarden_user }}"
+              ARCHIVE_MODE: "on"
+              ARCHIVE_TIMEOUT: 3600
+              AWS_ENDPOINT: "{{ pg4bw_aws_endpoint }}"
+              AWS_ACCESS_KEY_ID: "{{ pg4bw_aws_key }}"
+              AWS_REGION: "{{ pg4bw_aws_region }}"
+              AWS_SECRET_ACCESS_KEY: "{{ pg4bw_aws_secret }}"
+              WALG_S3_PREFIX: "{{ pg4bw_s3_bucket }}"
+              PGDATABASE: vaultwarden
+              PGPASSWORD: "{{ pg4bw_vaultwarden_password }}"
+              PGHOST: /var/run/postgresql
+              PGDATA: /var/lib/postgresql/data
+              WALG_COMPRESSION_METHOD: brotli
+              WALG_DELTA_MAX_STEPS: 6
+              APPRISE_TARGET: "{{ pg4bw_aprise_target }}"
+              # RECOVERY_TARGET_ACTION: ${RECOVERY_TARGET_ACTION}
+              # RECOVERY_TARGET_TIME: ${RECOVERY_TARGET_TIME}
+              # RECOVERY_TARGET_TIMELINE: ${RECOVERY_TARGET_TIMELINE}
+              # RECOVERY_WALG: ${RECOVERY_WALG}
+              # WALG_RESTORE_NAME: ${WALG_RESTORE_NAME}
+            healthcheck:
+              test: ["CMD-SHELL", "pg_isready -d vaultwarden"]
+              # start_period: 300s
+              interval: 20s
+              timeout: 30s
+              retries: 3
+          bitwarden:
+            image: "{{ bw_image }}"
+            volumes:
+              - "{{ bw_data }}:/data"
+            # ports:
+            #   - "127.0.0.1:8080:80"
+            environment:
+              - YUBICO_CLIENT_ID={{ yubico_client_id }}
+              - YUBICO_SECRET_KEY={{ yubico_secret_key }}
+              # disable this for the first time
+              - SIGNUPS_ALLOWED={{ signups_allowed }}
+              - SMTP_HOST={{ smtp_host }}
+              - SMTP_FROM={{ smtp_from }}
+              - SMTP_PORT={{ smtp_port }}
+              - SMTP_SECURITY={{ smtp_security }}
+              - SMTP_USERNAME={{ smtp_username }}
+              - SMTP_PASSWORD={{ smtp_password }}
+              - DOMAIN={{ domain }}
+              - DATABASE_URL=postgresql://{{ pg4bw_vaultwarden_user }}:{{ pg4bw_vaultwarden_password }}@{{ pg4bw_container_name }}:5432/vaultwarden
+            deploy: "{{ bw_swarm_deploy }}"
+        networks:
+          default:
+            external:
+              name: "{{ bw_network_name | default('tf_net') }}"
+  when:
+    - bw_swarm_deploy is defined
