@@ -106,6 +106,20 @@
   when:
     - bw_swarm_deploy is not defined
 
+- name: Ensure overlay networks exist for Swarm
+  community.docker.docker_network:
+    name: "{{ item }}"
+    driver: overlay
+    attachable: yes
+    scope: swarm
+    state: present
+  loop:
+    - "{{ bw_network_name }}"
+    - "{{ traefik_docker_network_name }}"
+  when:
+    - bw_swarm_deploy is defined
+  ignore_errors: true
+
 - name: Deploy bitwarden container in swarm
   community.docker.docker_stack:
     state: present
@@ -148,6 +162,8 @@
               interval: 20s
               timeout: 30s
               retries: 3
+            networks:
+              - bw_net
           bitwarden:
             image: "{{ bw_image }}"
             volumes:
@@ -168,9 +184,15 @@
               - DOMAIN={{ domain }}
               - DATABASE_URL=postgresql://{{ pg4bw_vaultwarden_user }}:{{ pg4bw_vaultwarden_password }}@{{ pg4bw_container_name }}:5432/vaultwarden
             deploy: "{{ bw_swarm_deploy }}"
+            networks:
+              - bw_net
+              - traefik_net
         networks:
-          default:
-            external:
-              name: "{{ bw_network_name | default('tf_net') }}"
+          bw_net:
+            external: true
+            name: "{{ bw_network_name }}"
+          traefik_net:
+            external: true
+            name: "{{ traefik_docker_network_name }}"
   when:
     - bw_swarm_deploy is defined
